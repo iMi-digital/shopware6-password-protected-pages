@@ -14,10 +14,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CheckPasswordSubscriber implements EventSubscriberInterface
 {
-    public const AUTH_SESSION_PREFIX = 'auth_';
+    const AUTH_SESSION_PREFIX = 'auth_';
 
-    private EntityRepository $categoryRepositoryInterface;
-    private PasswordPageController $passwordPageController;
+    private $categoryRepositoryInterface;
+    private $passwordPageController;
 
     public function __construct(EntityRepository $categoryRepositoryInterface, PasswordPageController $passwordPageController)
     {
@@ -58,7 +58,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         $this->checkPasswordInPath($category, $event);
     }
 
-    private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent $event, string $navigationId)
+    private function checkAuthenticated($event, string $navigationId)
     {
         $session = $event->getRequest()->getSession();
         $session->set('redirect', $event->getRequest()->server->get('REQUEST_URI'));
@@ -68,7 +68,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function checkPasswordInPath(CategoryEntity $category, PageLoadedEvent|HttpCacheHitEvent $event)
+    private function checkPasswordInPath(CategoryEntity $category, $event)
     {
         $context = Context::createDefaultContext();
         if ($event instanceof PageLoadedEvent) {
