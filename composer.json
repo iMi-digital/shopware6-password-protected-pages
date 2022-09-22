@@ -1,13 +1,22 @@
 {
-    "name": "imi/imi-password-site",
+    "name": "imi/shopware6-password-site",
     "version": "1.0.0",
-    "description": "iMi Custom Password Site",
+    "description": "iMi Password Protected Page",
     "type": "shopware-platform-plugin",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "autoload": {
         "psr-4": {
             "iMidiPasswordSite\\": "src/"
         }
+    },
+    "authors": [
+        {
+            "name": "iMi digital GmbH",
+            "email": "info@imi.de"
+        }
+    ],
+    "require": {
+        "shopware/core": "~v6.4.13"
     },
     "extra": {
         "shopware-plugin-class": "iMidiPasswordSite\\iMidiPasswordSite",
@@ -16,8 +25,16 @@
             "en-GB": "iMi Password Site"
         },
         "description": {
-            "de-DE": "Erm\u00f6glicht das Sichern von Frontendseiten mit einem Passwort",
-            "en-GB": "Enables securing frontend sites by password"
+            "de-DE": "Erm\u00f6glicht das sichern von Frontendseiten (Kategorien) mit einem Passwort. Das Passwort kann unter 'Zusatzfelder' konfiguriert werden und wird auf Unterkateogrien vererbt.",
+            "en-GB": "Allows the store owner to secure frontend (categories) pages with a password. The password can be defined under 'custom fields' and is inherited by sub-categories automatically."
+        },
+        "manufacturerLink": {
+            "de-DE": "https://www.imi-digital.de/de/",
+            "en-GB": "https://www.imi-digital.de/en/"
+        },
+        "supportLink": {
+            "de-DE": "https://https://github.com/iMi-digital/shopware6-password-site/issues/de/",
+            "en-GB": "https://github.com/iMi-digital/shopware6-password-site/issues"
         }
     }
 }
