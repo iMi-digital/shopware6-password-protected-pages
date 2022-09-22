@@ -51,11 +51,13 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
     public function onCachedPageLoaded(HttpCacheHitEvent $event)
     {
-        $navigationId = basename($event->getRequest()->getRequestUri());
+        $requestUri = $event->getRequest()->getRequestUri();
 
-        $category = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
-
-        $this->checkPasswordInPath($category, $event);
+        if (str_starts_with($requestUri, '/navigation/')) {
+            $navigationId = basename($requestUri);
+            $category = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
+            $this->checkPasswordInPath($category, $event);
+        }
     }
 
     private function checkAuthenticated($event, string $navigationId)
