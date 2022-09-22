@@ -77,7 +77,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
         $path = $category->getPath();
         if (!$path) {
-            if (array_key_exists('password_site_password', $category->getCustomFields())) {
+            if ($category->getCustomFields() !== null && array_key_exists('password_site_password', $category->getCustomFields())) {
                 $this->checkAuthenticated($event, $category->getId());
             }
             return;
@@ -88,7 +88,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         foreach ($parents as $parentId) {
             $parent = $this->categoryRepositoryInterface
                 ->search(new Criteria([$parentId]), $context)->first();
-            if (array_key_exists('password_site_password', $parent->getCustomFields())) {
+            if ($parent->getCustomFields() !== null && array_key_exists('password_site_password', $parent->getCustomFields())) {
                 $this->checkAuthenticated($event, $parent->getId());
                 break;
             }
