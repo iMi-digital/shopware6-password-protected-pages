@@ -1,0 +1,28 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+
+{% block base_content %}
+    <div class="imidi-login-form">
+        {% block imidi_login_form %}
+        <form action="{{ path('frontend.password.login') }}" method="post">
+            {{ sw_csrf('frontend.password.login') }}
+            <input type="hidden" name="navigationId" value="{{ navigationId }}">
+            {% block imidi_login_form_inner %}
+
+                {% block imidi_login_form_inner_headline %}
+                    <h2>{{ 'imidi.headline'| trans }}</h2>
+                {% endblock %}
+
+                <div class="form-row">
+                    <div class="form-group col">
+                        <input class="form-control" type="password" name="password" placeholder="{{ 'imidi.password'| trans }}">
+                    </div>
+                    <div class="form-group col-3">
+                        <input class="form-control" type="submit" value="{{ 'imidi.login'| trans }}">
+                    </div>
+                </div>
+            {% endblock %}
+        </form>
+        {% endblock %}
+    </div>
+{% endblock %}

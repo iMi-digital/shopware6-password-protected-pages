@@ -1,0 +1,23 @@
+{
+    "name": "imi/imi-password-site",
+    "version": "1.0.0",
+    "description": "iMi Custom Password Site",
+    "type": "shopware-platform-plugin",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "iMidiPasswordSite\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "iMidiPasswordSite\\iMidiPasswordSite",
+        "label": {
+            "de-DE": "iMi Passwort Seite",
+            "en-GB": "iMi Password Site"
+        },
+        "description": {
+            "de-DE": "Erm\u00f6glicht das Sichern von Frontendseiten mit einem Passwort",
+            "en-GB": "Enables securing frontend sites by password"
+        }
+    }
+}
