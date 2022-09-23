@@ -51,7 +51,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
     public function onCachedPageLoaded(HttpCacheHitEvent $event)
     {
-        $requestUri = $event->getRequest()->getRequestUri();
+        $requestUri = $event->getRequest()->attributes->get('resolved-uri');
 
         if (str_starts_with($requestUri, '/navigation/')) {
             $navigationId = basename($requestUri);
