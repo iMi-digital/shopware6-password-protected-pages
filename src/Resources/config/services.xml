@@ -14,6 +14,7 @@
         </service>
         <service id="iMidiPasswordSite\Subscriber\CheckPasswordSubscriber">
             <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="router"/>
             <argument type="service" id="category.repository"/>
             <argument type="service" id="iMidiPasswordSite\Storefront\Controller\PasswordPageController"/>
         </service>
