@@ -16,11 +16,15 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 {
     const AUTH_SESSION_PREFIX = 'auth_';
 
+    private $matcher;
     private $categoryRepositoryInterface;
     private $passwordPageController;
 
-    public function __construct(EntityRepository $categoryRepositoryInterface, PasswordPageController $passwordPageController)
+    public function __construct($matcher,
+        EntityRepository $categoryRepositoryInterface,
+        PasswordPageController $passwordPageController)
     {
+        $this->matcher = $matcher;
         $this->categoryRepositoryInterface = $categoryRepositoryInterface;
         $this->passwordPageController = $passwordPageController;
     }
@@ -53,8 +57,14 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
     {
         $requestUri = $event->getRequest()->attributes->get('resolved-uri');
 
-        if (str_starts_with($requestUri, '/navigation/')) {
-            $navigationId = basename($requestUri);
+        if ($this->matcher instanceof RequestMatcherInterface) {
+            $parameters = $this->matcher->matchRequest($event->getRequest());
+        } else {
+            $parameters = $this->matcher->match($event->getRequest()->getPathInfo());
+        }
+
+        if ($parameters['_route'] === 'frontend.navigation.page') {
+            $navigationId = $parameters['navigationId'];
             $category = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
             $this->checkPasswordInPath($category, $event);
         }
@@ -72,6 +82,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
     private function checkPasswordInPath(CategoryEntity $category, $event)
     {
+        //include matcher
         $context = Context::createDefaultContext();
         if ($event instanceof PageLoadedEvent) {
             $context = $event->getContext();
