@@ -2,6 +2,10 @@
 
 namespace iMidiPasswordSite;
 
+use Enqueue\Util\UUID;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 
@@ -44,8 +48,15 @@ class iMidiPasswordSite extends Plugin
         ];
         $repo = $this->container->get('custom_field_set.repository');
 
-        foreach ($customFields as $customFieldSet) {
-            $repo->upsert([$customFieldSet], $context->getContext());
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('name', 'password_site'));
+
+        $result = $repo->search($criteria, $context->getContext());
+
+        if($result->count() <= 0) {
+            foreach ($customFields as $customFieldSet) {
+                $repo->upsert([$customFieldSet], $context->getContext());
+            }
         }
     }
 }
