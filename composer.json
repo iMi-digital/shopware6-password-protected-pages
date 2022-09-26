@@ -1,6 +1,6 @@
 {
     "name": "imi/shopware6-password-site",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "iMi Password Protected Page",
     "type": "shopware-platform-plugin",
     "license": "AGPL-3.0-or-later",
