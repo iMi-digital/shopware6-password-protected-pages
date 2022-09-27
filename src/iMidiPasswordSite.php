@@ -21,6 +21,7 @@ class iMidiPasswordSite extends Plugin
             [
                 'name' => 'password_site',
                 'active' => true,
+                'global' => true,
                 'config' => [
                     'label' => [
                         'en-GB' => 'Password Protected Page',
