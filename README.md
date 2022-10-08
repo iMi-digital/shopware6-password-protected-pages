@@ -1,5 +1,9 @@
 # shopware6-password-site
+
 Shopware 6 extension which allows the store owner to secure frontend (categories) pages with a password.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/iMi-digital/shopware6-password-site)
+
 
 ## Intro
 
