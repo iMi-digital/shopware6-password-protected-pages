@@ -64,7 +64,7 @@ class iMidiPasswordSite extends Plugin
             ]
         ];
 
-        $customFieldSetRepository = $this->container->get('custom_field_set.repository');
+        $customFieldSetRepository = $this->getCustomFieldRepository();
 
         if (!$this->customFieldsExist($customFieldSetRepository, $installContext->getContext())) {
             foreach ($customFields as $customFieldSet) {
@@ -92,6 +92,11 @@ class iMidiPasswordSite extends Plugin
         $ids = $customFieldSetRepository->searchIds($criteria, $context);
 
         return $ids->getTotal() > 0 ? $ids : null;
+    }
+
+    private function getCustomFieldRepository()
+    {
+        return $this->container->get('custom_field_set.repository');
     }
 
 }
