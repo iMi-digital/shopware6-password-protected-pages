@@ -18,12 +18,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PasswordPageController extends StorefrontController
 {
-    private EntityRepository $categoryRepositoryInterface;
+    private EntityRepository $categoryRepository;
     private GenericPageLoader $genericPageLoader;
 
-    public function __construct(EntityRepository $categoryRepositoryInterface, GenericPageLoader $genericPageLoader)
+    public function __construct(EntityRepository $categoryRepository, GenericPageLoader $genericPageLoader)
     {
-        $this->categoryRepositoryInterface = $categoryRepositoryInterface;
+        $this->categoryRepository = $categoryRepository;
         $this->genericPageLoader = $genericPageLoader;
     }
 
@@ -77,7 +77,7 @@ class PasswordPageController extends StorefrontController
             return null;
         }
 
-        $result = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), $context);
+        $result = $this->categoryRepository->search(new Criteria([$navigationId]), $context);
         if ($result->count() <= 0) {
             return null;
         }

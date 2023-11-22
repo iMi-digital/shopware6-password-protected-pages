@@ -8,6 +8,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
+use Shopware\Storefront\Framework\Routing\Router;
 use Shopware\Storefront\Page\GenericPageLoadedEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -16,16 +17,17 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 {
     const AUTH_SESSION_PREFIX = 'auth_';
 
-    private $matcher;
-    private $categoryRepositoryInterface;
+    private $router;
+    private $categoryRepository;
     private $passwordPageController;
 
-    public function __construct($matcher,
-        EntityRepository $categoryRepositoryInterface,
+    public function __construct(
+        Router $router,
+        EntityRepository $categoryRepository,
         PasswordPageController $passwordPageController)
     {
-        $this->matcher = $matcher;
-        $this->categoryRepositoryInterface = $categoryRepositoryInterface;
+        $this->router = $router;
+        $this->categoryRepository = $categoryRepository;
         $this->passwordPageController = $passwordPageController;
     }
 
@@ -57,15 +59,15 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
     {
         $requestUri = $event->getRequest()->attributes->get('resolved-uri');
 
-        if ($this->matcher instanceof RequestMatcherInterface) {
-            $parameters = $this->matcher->matchRequest($event->getRequest());
+        if ($this->router instanceof RequestMatcherInterface) {
+            $parameters = $this->router->matchRequest($event->getRequest());
         } else {
-            $parameters = $this->matcher->match($event->getRequest()->getPathInfo());
+            $parameters = $this->router->match($event->getRequest()->getPathInfo());
         }
 
         if ($parameters['_route'] === 'frontend.navigation.page') {
             $navigationId = $parameters['navigationId'];
-            $category = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
+            $category = $this->categoryRepository->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
             $this->checkPasswordInPath($category, $event);
         }
     }
@@ -82,7 +84,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
     private function checkPasswordInPath(CategoryEntity $category, $event)
     {
-        //include matcher
+        //include router
         $context = Context::createDefaultContext();
         if ($event instanceof PageLoadedEvent) {
             $context = $event->getContext();
@@ -99,7 +101,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         $path .= $category->getId();
         $parents = array_reverse(array_slice(explode('|', $path), 1));
         foreach ($parents as $parentId) {
-            $parent = $this->categoryRepositoryInterface
+            $parent = $this->categoryRepository
                 ->search(new Criteria([$parentId]), $context)->first();
             if ($parent->getCustomFields() !== null && array_key_exists('password_site_password', $parent->getCustomFields())) {
                 $this->checkAuthenticated($event, $parent->getId());
