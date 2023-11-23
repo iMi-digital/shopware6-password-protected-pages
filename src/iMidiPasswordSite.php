@@ -43,6 +43,7 @@ class iMidiPasswordSite extends Plugin
                         'en-GB' => 'Password Protected Page',
                         'de-DE' => 'Passwortgeschützte Seite'
                     ],
+                    'translated' => false
                 ],
                 'customFields' => [
                     [

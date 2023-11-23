@@ -2,11 +2,12 @@
 
 namespace iMidiPasswordSite\Storefront\Controller;
 
-use iMidiPasswordSite\Subscriber\CheckPasswordSubscriber;
+use iMidiPasswordSite\Service\PasswordPathService;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Storefront\Controller\NavigationController;
 use Shopware\Storefront\Controller\StorefrontController;
 use Shopware\Storefront\Page\GenericPageLoader;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,13 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PasswordPageController extends StorefrontController
 {
-    private EntityRepository $categoryRepository;
-    private GenericPageLoader $genericPageLoader;
 
-    public function __construct(EntityRepository $categoryRepository, GenericPageLoader $genericPageLoader)
+    public function __construct(
+        private EntityRepository $categoryRepository,
+        private GenericPageLoader $genericPageLoader,
+        private NavigationController $navigationController,
+    )
     {
-        $this->categoryRepository = $categoryRepository;
-        $this->genericPageLoader = $genericPageLoader;
     }
 
     /**
@@ -43,7 +44,7 @@ class PasswordPageController extends StorefrontController
     /**
      * @Route("/login", name="frontend.password.login", methods={"POST"})
      */
-    public function login(Request $request, Context $context): Response
+    public function login(Request $request, SalesChannelContext $context): Response
     {
         $navigationId = $request->request->get('navigationId');
 
@@ -54,14 +55,15 @@ class PasswordPageController extends StorefrontController
 
         $password = $request->request->get('password');
 
-        $sitepassword = $this->getCategoryPassword($navigationId, $context);
+        $sitepassword = $this->getCategoryPassword($navigationId, $context->getContext());
 
         if ($password === $sitepassword) {
-            $request->getSession()->set(CheckPasswordSubscriber::AUTH_SESSION_PREFIX . $navigationId, true);
-            return $this->redirect($request->getSession()->get('redirect'));
+            $request->getSession()->set(PasswordPathService::AUTH_SESSION_PREFIX . $navigationId, true);
+            return $this->navigationController->index($context, $request);
         }
 
         $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
+
         return $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
     }
 

@@ -25,6 +25,9 @@ class PasswordPathService
     public function checkPasswordInPath(CategoryEntity $category, PageLoadedEvent|HttpCacheHitEvent $event)
     {
         $context = Context::createDefaultContext();
+        if ($event instanceof PageLoadedEvent) {
+            $context = $event->getContext();
+        }
 
         $path = $category->getPath();
         if (!$path) {
@@ -52,10 +55,11 @@ class PasswordPathService
         }
     }
 
-    private function checkAuthenticated($event, string $navigationId)
+    private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent $event, string $navigationId)
     {
         $session = $event->getRequest()->getSession();
-        $session->set('redirect', $event->getRequest()->server->get('REQUEST_URI'));
+        $redirect = $event->getSalesChannelContext() . $event->getRequest()->server->get('REQUEST_URI');
+        $session->set('redirect', $redirect);
 
         if (!$session->has(self::AUTH_SESSION_PREFIX . $navigationId)) {
             $this->passwordPageController->redirectToLogin($navigationId);
