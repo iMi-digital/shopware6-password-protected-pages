@@ -42,11 +42,11 @@ class PasswordPageController extends StorefrontController
     }
 
     /**
-     * @Route("/login", name="frontend.password.login", methods={"POST"})
+     * @Route("/auth/{navigationId}", name="frontend.password.login", methods={"POST"})
      */
     public function login(Request $request, SalesChannelContext $context): Response
     {
-        $navigationId = $request->request->get('navigationId');
+        $navigationId = $request->get('navigationId');
 
         if(!$request->request->has('password')) {
             $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
@@ -55,7 +55,7 @@ class PasswordPageController extends StorefrontController
 
         $password = $request->request->get('password');
 
-        $sitepassword = $this->getCategoryPassword($navigationId, $context->getContext());
+        $sitepassword = $this->getCategoryPassword($navigationId);
 
         if ($password === $sitepassword) {
             $request->getSession()->set(PasswordPathService::AUTH_SESSION_PREFIX . $navigationId, true);
@@ -73,14 +73,14 @@ class PasswordPageController extends StorefrontController
         $response->send();
     }
 
-    public function getCategoryPassword(string $navigationId, Context $context): ?string
+    public function getCategoryPassword(string $navigationId): ?string
     {
         if (!$navigationId) {
             return null;
         }
 
-        $result = $this->categoryRepository->search(new Criteria([$navigationId]), $context);
-        if ($result->count() <= 0) {
+        $result = $this->categoryRepository->search(new Criteria([$navigationId]), Context::createDefaultContext());
+        if ($result->count() <= 0 || !$result->first()) {
             return null;
         }
 
