@@ -30,4 +30,4 @@ jobs:
       with:
           path: custom/plugins/iMidiPasswordSite
     - name: Install and activate plugin
-      run: bin/console plugin:install -a iMidiPasswordSite
+      run: bin/console plugin:refresh && bin/console plugin:install -a iMidiPasswordSite
