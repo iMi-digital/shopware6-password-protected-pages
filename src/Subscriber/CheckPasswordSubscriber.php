@@ -3,11 +3,13 @@
 namespace iMidiPasswordSite\Subscriber;
 
 use iMidiPasswordSite\Service\PasswordPathService;
-use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent;
+use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
+use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
 use Shopware\Storefront\Framework\Routing\Router;
 use Shopware\Storefront\Page\GenericPageLoadedEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 class CheckPasswordSubscriber implements EventSubscriberInterface
 {
@@ -24,6 +26,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         return [
             GenericPageLoadedEvent::class => 'onPageLoaded',
             HttpCacheHitEvent::class => 'onCachedPageLoaded',
+            CoreHttpCacheHitEvent::class => 'onCachedPageLoaded',
         ];
     }
 
@@ -36,7 +39,6 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
             return;
         }
 
-        //????
         $page = $event->getPage();
         if (!$page->getHeader()) {
             return;
@@ -46,9 +48,8 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         $this->passwordPathService->checkPasswordInPath($activeNavigation, $event);
     }
 
-    public function onCachedPageLoaded(HttpCacheHitEvent $event)
+    public function onCachedPageLoaded(HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
-
         $requestUri = $event->getRequest()->attributes->get('resolved-uri');
 
         if ($this->router instanceof RequestMatcherInterface) {
