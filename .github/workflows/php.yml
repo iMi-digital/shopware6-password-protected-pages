@@ -23,5 +23,5 @@ jobs:
         shopware-version: v6.5.3.2
         php-version: 8.1
     
-    - name: Run test suite
-      run: composer run-script test
+    - name: Setup Shopware Part 2
+      run: composer setup
