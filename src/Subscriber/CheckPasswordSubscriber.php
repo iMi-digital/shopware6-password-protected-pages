@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace iMidiPasswordSite\Subscriber;
+namespace ImiDiPasswordSite\Subscriber;
 
-use iMidiPasswordSite\Service\PasswordPathService;
+use ImiDiPasswordSite\Service\PasswordPathService;
 use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
 use Shopware\Storefront\Framework\Routing\Router;

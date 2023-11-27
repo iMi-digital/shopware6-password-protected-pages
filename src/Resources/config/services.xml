@@ -8,6 +8,6 @@
         <defaults autowire="true" autoconfigure="true" public="false">
         </defaults>
 
-        <prototype namespace="iMidiPasswordSite\" resource="../../*"/>
+        <prototype namespace="ImiDiPasswordSite\" resource="../../*"/>
     </services>
 </container>

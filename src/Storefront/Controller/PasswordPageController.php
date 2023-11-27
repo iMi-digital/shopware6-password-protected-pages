@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace iMidiPasswordSite\Storefront\Controller;
+namespace ImiDiPasswordSite\Storefront\Controller;
 
-use iMidiPasswordSite\Service\PasswordPathService;
+use ImiDiPasswordSite\Service\PasswordPathService;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -33,7 +33,7 @@ class PasswordPageController extends StorefrontController
     {
         $page = $this->genericPageLoader->load($request, $context);
 
-        return $this->renderStorefront('@iMidiPasswordSite/storefront/page/restricted.html.twig', [
+        return $this->renderStorefront('@ImiDiPasswordSite/storefront/page/restricted.html.twig', [
             'navigationId' => $request->get('navigationId'),
             'page' => $page,
         ]);
@@ -47,7 +47,7 @@ class PasswordPageController extends StorefrontController
         $navigationId = $request->get('navigationId');
 
         if(!$request->request->has('password')) {
-            $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
+            $this->addFlash(self::DANGER, $this->trans('ImiDi.password-incorrect'));
             return $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
         }
 
@@ -60,7 +60,7 @@ class PasswordPageController extends StorefrontController
             return $this->redirectToRoute('frontend.navigation.page', ['navigationId' => $navigationId]);
         }
 
-        $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
+        $this->addFlash(self::DANGER, $this->trans('ImiDi.password-incorrect'));
 
         return $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace iMidiPasswordSite\Service;
+namespace ImiDiPasswordSite\Service;
 
-use iMidiPasswordSite\Storefront\Controller\PasswordPageController;
+use ImiDiPasswordSite\Storefront\Controller\PasswordPageController;
 use Shopware\Core\Content\Category\CategoryEntity;
 use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
 use Shopware\Core\Framework\Context;
