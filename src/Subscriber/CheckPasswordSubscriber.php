@@ -50,8 +50,6 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
     public function onCachedPageLoaded(HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
-        $requestUri = $event->getRequest()->attributes->get('resolved-uri');
-
         if ($this->router instanceof RequestMatcherInterface) {
             $parameters = $this->router->matchRequest($event->getRequest());
         } else {
@@ -59,8 +57,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         }
 
         if ($parameters['_route'] === 'frontend.navigation.page') {
-            $navigationId = $parameters['navigationId'];
-            $this->passwordPathService->findNavigation($navigationId, $event);
+            $this->passwordPathService->findNavigation($parameters['navigationId'], $event);
         }
     }
 

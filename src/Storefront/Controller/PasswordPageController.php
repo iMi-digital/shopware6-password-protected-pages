@@ -7,7 +7,6 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Storefront\Controller\NavigationController;
 use Shopware\Storefront\Controller\StorefrontController;
 use Shopware\Storefront\Page\GenericPageLoader;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +22,6 @@ class PasswordPageController extends StorefrontController
     public function __construct(
         private EntityRepository $categoryRepository,
         private GenericPageLoader $genericPageLoader,
-        private NavigationController $navigationController,
     )
     {
     }
@@ -31,7 +29,7 @@ class PasswordPageController extends StorefrontController
     /**
      * @Route("/restricted/{navigationId}", name="frontend.password.restricted", methods={"GET"})
      */
-    public function showLogin(Request $request, SalesChannelContext $context): Response
+    public function restricted(Request $request, SalesChannelContext $context): Response
     {
         $page = $this->genericPageLoader->load($request, $context);
 
@@ -42,7 +40,7 @@ class PasswordPageController extends StorefrontController
     }
 
     /**
-     * @Route("/auth/{navigationId}", name="frontend.password.login", methods={"POST"})
+     * @Route("/login/{navigationId}", name="frontend.password.login", methods={"POST"})
      */
     public function login(Request $request, SalesChannelContext $context): Response
     {
@@ -59,7 +57,7 @@ class PasswordPageController extends StorefrontController
 
         if ($password === $sitepassword) {
             $request->getSession()->set(PasswordPathService::AUTH_SESSION_PREFIX . $navigationId, true);
-            return $this->navigationController->index($context, $request);
+            return $this->redirectToRoute('frontend.navigation.page', ['navigationId' => $navigationId]);
         }
 
         $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
@@ -73,7 +71,7 @@ class PasswordPageController extends StorefrontController
         $response->send();
     }
 
-    public function getCategoryPassword(string $navigationId): ?string
+    private function getCategoryPassword(string $navigationId): ?string
     {
         if (!$navigationId) {
             return null;

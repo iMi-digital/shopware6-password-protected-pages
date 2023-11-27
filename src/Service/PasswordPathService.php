@@ -4,10 +4,11 @@ namespace iMidiPasswordSite\Service;
 
 use iMidiPasswordSite\Storefront\Controller\PasswordPageController;
 use Shopware\Core\Content\Category\CategoryEntity;
-use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent;
+use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
 
 class PasswordPathService
@@ -22,7 +23,7 @@ class PasswordPathService
     {
     }
 
-    public function checkPasswordInPath(CategoryEntity $category, PageLoadedEvent|HttpCacheHitEvent $event)
+    public function checkPasswordInPath(CategoryEntity $category, PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
         $context = Context::createDefaultContext();
 
@@ -43,6 +44,10 @@ class PasswordPathService
             $parent = $this->categoryRepository
                 ->search(new Criteria([$parentId]), $context)->first();
 
+            if(!$parent) {
+                break;
+            }
+
             if ($parent->getCustomFields() !== null
                 && array_key_exists('password_site_password', $parent->getCustomFields())) {
 
@@ -52,7 +57,7 @@ class PasswordPathService
         }
     }
 
-    private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent $event, string $navigationId)
+    private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event, string $navigationId)
     {
         $session = $event->getRequest()->getSession();
         $redirect = $event->getRequest()->server->get('REQUEST_URI');
@@ -63,7 +68,7 @@ class PasswordPathService
         }
     }
 
-    public function findNavigation(mixed $navigationId, HttpCacheHitEvent $event)
+    public function findNavigation(mixed $navigationId, PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
         $category = $this->categoryRepository->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
         $this->checkPasswordInPath($category, $event);
