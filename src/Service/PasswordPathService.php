@@ -52,7 +52,7 @@ class PasswordPathService
             if ($parent->getCustomFields() !== null
                 && array_key_exists('password_site_password', $parent->getCustomFields())) {
 
-                $this->checkAuthenticated($event, $parent->getId());
+                $this->checkAuthenticated($event->getRequest(), $parent->getId());
                 break;
             }
         }
