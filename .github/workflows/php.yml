@@ -24,7 +24,7 @@ jobs:
         php-version: 8.1
         shopware-version: ${{ matrix.shopware-version }}        
     - name: Setup Shopware Database
-      run: composer setup
+      run: echo 'APP_SECRET="def00000d0c06185824538c33f492f4639911a3e490157323013bc79fead08bbcab30e84508e5c741e1a636be478c92c6098510f981a87933a39ab5743362da0b2a4163a"' >> .env.local && composer setup
     - uses: actions/checkout@v3
       with:
           path: custom/plugins/ImiDiPasswordSite
