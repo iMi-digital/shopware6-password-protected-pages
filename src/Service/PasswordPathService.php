@@ -10,6 +10,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 class PasswordPathService
 {
@@ -57,10 +58,10 @@ class PasswordPathService
         }
     }
 
-    private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event, string $navigationId)
+    private function checkAuthenticated(Request $request, string $navigationId)
     {
-        $session = $event->getRequest()->getSession();
-        $redirect = $event->getRequest()->server->get('REQUEST_URI');
+        $session = $request->getSession();
+        $redirect = $request->server->get('REQUEST_URI');
         $session->set('redirect', $redirect);
 
         if (!$session->has(self::AUTH_SESSION_PREFIX . $navigationId)) {

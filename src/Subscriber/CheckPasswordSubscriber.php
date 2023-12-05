@@ -25,6 +25,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
     {
         return [
             GenericPageLoadedEvent::class => 'onPageLoaded',
+            /** @deprecated tag:v6.6.0 - Delete HttpCacheHitEvent and use CoreHttpCacheHitEvent instead */
             HttpCacheHitEvent::class => 'onCachedPageLoaded',
             CoreHttpCacheHitEvent::class => 'onCachedPageLoaded',
         ];

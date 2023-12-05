@@ -29,9 +29,9 @@ class PasswordPageController extends StorefrontController
     /**
      * @Route("/restricted/{navigationId}", name="frontend.password.restricted", methods={"GET"})
      */
-    public function restricted(Request $request, SalesChannelContext $context): Response
+    public function restricted(Request $request, SalesChannelContext $salesChannelContext): Response
     {
-        $page = $this->genericPageLoader->load($request, $context);
+        $page = $this->genericPageLoader->load($request, $salesChannelContext);
 
         return $this->renderStorefront('@ImiDiPasswordSite/storefront/page/restricted.html.twig', [
             'navigationId' => $request->get('navigationId'),
@@ -42,7 +42,7 @@ class PasswordPageController extends StorefrontController
     /**
      * @Route("/login/{navigationId}", name="frontend.password.login", methods={"POST"})
      */
-    public function login(Request $request, SalesChannelContext $context): Response
+    public function login(Request $request): Response
     {
         $navigationId = $request->get('navigationId');
 
