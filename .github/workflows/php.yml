@@ -33,5 +33,5 @@ jobs:
     - name: Run Tests
       run: |
           cd custom/plugins/ImiDiPasswordSite/
-          php -d pcov.enabled=1 ../../../vendor/bin/phpunit --configuration=../../../phpunit.xml.dist --coverage-clover clover.xml tests/
+          php -d pcov.enabled=1 ../../../vendor/bin/phpunit  tests/ --configuration=../../../phpunit.xml.dist --coverage-clover clover.xml
 
