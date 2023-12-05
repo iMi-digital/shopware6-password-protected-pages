@@ -30,3 +30,5 @@ jobs:
           path: custom/plugins/ImiDiPasswordSite
     - name: Install and activate plugin
       run: export APP_SECRET=1 && bin/console plugin:refresh && bin/console plugin:install -a ImiDiPasswordSite
+    - name: PHPunit
+      run: vendor/bin/phpunit
