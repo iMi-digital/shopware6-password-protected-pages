@@ -27,6 +27,6 @@ jobs:
       run: composer setup
     - uses: actions/checkout@v3
       with:
-          path: custom/plugins/iMidiPasswordSite
+          path: custom/plugins/ImiDiPasswordSite
     - name: Install and activate plugin
-      run: bin/console plugin:refresh && bin/console plugin:install -a iMidiPasswordSite
+      run: bin/console plugin:refresh && bin/console plugin:install -a ImiDiPasswordSite
