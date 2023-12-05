@@ -1,0 +1,37 @@
+name: Shopware Plugin Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+        matrix:
+            shopware-version:
+                - 'v6.5.7.3'
+    steps:
+    - name: Setup Shopware
+      uses: FriendsOfShopware/setup-shopware@v1
+      with:
+        php-version: 8.1
+        shopware-version: ${{ matrix.shopware-version }}        
+    - name: Setup Shopware Database
+      run: composer setup
+    - uses: actions/checkout@v3
+      with:
+          path: custom/plugins/ImiDiPasswordSite
+    - name: Install and activate plugin
+      run: export APP_SECRET=1 && bin/console plugin:refresh && bin/console plugin:install -a ImiDiPasswordSite
+    - name: Run Tests
+      run: |
+          cd custom/plugins/ImiDiPasswordSite/
+          php -d pcov.enabled=1 ../../../vendor/bin/phpunit  tests/ --configuration=../../../phpunit.xml.dist --coverage-clover clover.xml
+
