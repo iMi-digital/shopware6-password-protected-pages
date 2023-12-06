@@ -2,7 +2,7 @@
 
 namespace ImiDiPasswordSite\Service;
 
-use ImiDiPasswordSite\Exception\UserNotLoggedInException;
+use ImiDiPasswordSite\Exception\UnauthorizedException;
 use ImiDiPasswordSite\Storefront\Controller\PasswordPageController;
 use Shopware\Core\Content\Category\CategoryEntity;
 use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
@@ -65,7 +65,7 @@ class PasswordPathService
         $session->set('redirect', $redirect);
 
         if (!$session->has(self::AUTH_SESSION_PREFIX . $navigationId)) {
-            throw new UserNotLoggedInException(302, 403, 'Unauthorized access to password protected page', ['location' => '/restricted/' . $navigationId]);
+            throw new UnauthorizedException(302, 403, 'Unauthorized access to password protected page', ['location' => '/restricted/' . $navigationId]);
         }
     }
 
