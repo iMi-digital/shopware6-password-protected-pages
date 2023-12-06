@@ -2,6 +2,7 @@
 
 namespace ImiDiPasswordSite\Service;
 
+use ImiDiPasswordSite\Exception\UserNotLoggedInException;
 use ImiDiPasswordSite\Storefront\Controller\PasswordPageController;
 use Shopware\Core\Content\Category\CategoryEntity;
 use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
@@ -10,7 +11,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
-use Symfony\Component\HttpFoundation\Request;
 
 class PasswordPathService
 {
@@ -52,20 +52,20 @@ class PasswordPathService
             if ($parent->getCustomFields() !== null
                 && array_key_exists('password_site_password', $parent->getCustomFields())) {
 
-                $this->checkAuthenticated($event->getRequest(), $parent->getId());
+                $this->checkAuthenticated($event, $parent->getId());
                 break;
             }
         }
     }
 
-    private function checkAuthenticated(Request $request, string $navigationId)
+    private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event, string $navigationId)
     {
-        $session = $request->getSession();
-        $redirect = $request->server->get('REQUEST_URI');
+        $session = $event->getRequest()->getSession();
+        $redirect = $event->getRequest()->server->get('REQUEST_URI');
         $session->set('redirect', $redirect);
 
         if (!$session->has(self::AUTH_SESSION_PREFIX . $navigationId)) {
-            $this->passwordPageController->redirectToLogin($navigationId);
+            throw new UserNotLoggedInException(302, 403, 'Unauthorized access to password protected page', ['location' => '/restricted/' . $navigationId]);
         }
     }
 

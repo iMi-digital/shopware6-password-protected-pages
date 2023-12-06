@@ -65,12 +65,6 @@ class PasswordPageController extends StorefrontController
         return $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
     }
 
-    public function redirectToLogin(string $navigationId)
-    {
-        $response = $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
-        $response->send();
-    }
-
     private function getCategoryPassword(string $navigationId): ?string
     {
         if (!$navigationId) {

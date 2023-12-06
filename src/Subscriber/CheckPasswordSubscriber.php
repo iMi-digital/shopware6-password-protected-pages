@@ -2,6 +2,7 @@
 
 namespace ImiDiPasswordSite\Subscriber;
 
+use ImiDiPasswordSite\Exception\UserNotLoggedInException;
 use ImiDiPasswordSite\Service\PasswordPathService;
 use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
@@ -9,6 +10,9 @@ use Shopware\Storefront\Framework\Routing\Router;
 use Shopware\Storefront\Page\GenericPageLoadedEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 class CheckPasswordSubscriber implements EventSubscriberInterface
@@ -28,6 +32,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
             /** @deprecated tag:v6.6.0 - Delete HttpCacheHitEvent and use CoreHttpCacheHitEvent instead */
             HttpCacheHitEvent::class => 'onCachedPageLoaded',
             CoreHttpCacheHitEvent::class => 'onCachedPageLoaded',
+            KernelEvents::EXCEPTION => 'onException',
         ];
     }
 
@@ -62,5 +67,22 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         }
     }
 
+    public function onException(ExceptionEvent $event)
+    {
+        if(!$event->getThrowable() instanceof UserNotLoggedInException) {
+            return;
+        }
 
+        $request = $event->getRequest();
+
+        $parameters = [
+            'redirectTo' => $request->attributes->get('_route'),
+            'redirectParameters' => json_encode($request->attributes->get('_route_params'), \JSON_THROW_ON_ERROR),
+            'navigationId' => $request->attributes->get('_route_params')['navigationId'] ?? '',
+        ];
+
+        $redirectResponse = new RedirectResponse($this->router->generate('frontend.password.restricted', $parameters));
+
+        $event->setResponse($redirectResponse);
+    }
 }
