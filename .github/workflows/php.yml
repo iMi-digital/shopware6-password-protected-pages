@@ -22,7 +22,7 @@ jobs:
       uses: FriendsOfShopware/setup-shopware@v1
       with:
         php-version: 8.1
-        shopware-version: ${{ matrix.shopware-version }}        
+        shopware-version: ${{ matrix.shopware-version }}
     - name: Setup Shopware Database
       run: composer setup
     - uses: actions/checkout@v3
@@ -33,5 +33,5 @@ jobs:
     - name: Run Tests
       run: |
           cd custom/plugins/ImiDiPasswordSite/
-          php -d pcov.enabled=1 ../../../vendor/bin/phpunit  tests/ --configuration=../../../phpunit.xml.dist --coverage-clover clover.xml
+          TEST_TOKEN=none php -d pcov.enabled=1 ../../../vendor/bin/phpunit  tests/ --configuration=../../../phpunit.xml.dist --coverage-clover clover.xml
 
