@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use ImiDiPasswordSite\Service\PasswordPathService;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
@@ -17,7 +18,6 @@ class PasswordPageTest extends TestCase
     use StorefrontControllerTestBehaviour;
 
     protected SalesChannelContext $context;
-    private string $categoryId;
     private TestDataCollection $ids;
 
     protected function setUp(): void
@@ -27,12 +27,27 @@ class PasswordPageTest extends TestCase
         $this->createData();
     }
 
-    public function testPasswordPageTrigger(): void
+    public function testProtectedPageTrigger(): void
     {
-        $response = $this->request('GET', '/my-navigation/', []);
+        $response = $this->request('GET', '/protected-navigation/', []);
         static::assertEquals(302, $response->getStatusCode());
         static::assertTrue($response->isRedirect());
+        self::assertStringContainsString('/restricted/', $response->getTargetUrl());
+    }
 
+    public function testProtectedPageLogin(): void
+    {
+        $this->getSession()->set(PasswordPathService::AUTH_SESSION_PREFIX . $this->ids->get('protected'), true);
+        $response = $this->request('GET', '/protected-navigation/', []);
+        static::assertEquals(200, $response->getStatusCode());
+        static::assertFalse($response->isRedirect());
+    }
+
+    public function testUnprotectedPage(): void
+    {
+        $response = $this->request('GET', '/unprotected-navigation/', []);
+        static::assertEquals(200, $response->getStatusCode());
+        static::assertFalse($response->isRedirect());
     }
 
     private function createData(): void
@@ -45,11 +60,9 @@ class PasswordPageTest extends TestCase
             Context::createDefaultContext()
         )->first();
 
-        $this->categoryId = $this->ids->create('category');
-
-        $category = [
-            'id' => $this->categoryId,
-            'name' => 'my-navigation',
+        $protectedCategory = [
+            'id' => $this->ids->create('protected'),
+            'name' => 'protected-navigation',
             'type' => 'page',
             'parentId' => $salesChannel->getNavigationCategoryId(),
             'customFields' => [
@@ -57,6 +70,13 @@ class PasswordPageTest extends TestCase
             ]
         ];
 
-        $this->getContainer()->get('category.repository')->create([$category], Context::createDefaultContext());
+        $unprotectedCategory = [
+            'id' => $this->ids->create('unprotected'),
+            'name' => 'unprotected-navigation',
+            'type' => 'page',
+            'parentId' => $salesChannel->getNavigationCategoryId(),
+        ];
+
+        $this->getContainer()->get('category.repository')->create([$protectedCategory, $unprotectedCategory], Context::createDefaultContext());
     }
 }
