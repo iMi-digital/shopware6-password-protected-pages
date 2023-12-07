@@ -32,15 +32,32 @@ class PasswordPageTest extends TestCase
         $response = $this->request('GET', '/protected-navigation/', []);
         static::assertEquals(302, $response->getStatusCode());
         static::assertTrue($response->isRedirect());
-        self::assertStringContainsString('/restricted/', $response->getTargetUrl());
+        static::assertStringContainsString('/password-site/login/', $response->getTargetUrl());
     }
 
     public function testProtectedPageLogin(): void
     {
-        $this->getSession()->set(PasswordPathService::AUTH_SESSION_PREFIX . $this->ids->get('protected'), true);
+        $response = $this->request('POST', '/password-site/login/' . $this->ids->get('protected'), ['password' => 'secret']);
+        static::assertEquals(302, $response->getStatusCode());
+        static::assertTrue($response->isRedirect());
+        static::assertStringContainsString('/navigation/'  . $this->ids->get('protected'), $response->getTargetUrl());
+
         $response = $this->request('GET', '/protected-navigation/', []);
         static::assertEquals(200, $response->getStatusCode());
         static::assertFalse($response->isRedirect());
+    }
+
+    public function testProtectedPageLoginFailed(): void
+    {
+        $response = $this->request('POST', '/password-site/login/' . $this->ids->get('protected'), ['password' => 'not_my_secret']);
+        static::assertEquals(302, $response->getStatusCode());
+        static::assertTrue($response->isRedirect());
+        static::assertStringContainsString('/password-site/login/', $response->getTargetUrl());
+
+        $response = $this->request('GET', '/protected-navigation/', []);
+        static::assertEquals(302, $response->getStatusCode());
+        static::assertTrue($response->isRedirect());
+        static::assertStringContainsString('/password-site/login/', $response->getTargetUrl());
     }
 
     public function testUnprotectedPage(): void
@@ -66,7 +83,7 @@ class PasswordPageTest extends TestCase
             'type' => 'page',
             'parentId' => $salesChannel->getNavigationCategoryId(),
             'customFields' => [
-                'password_site_password' => 'password'
+                'password_site_password' => 'secret'
             ]
         ];
 

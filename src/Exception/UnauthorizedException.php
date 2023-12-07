@@ -4,7 +4,7 @@ namespace ImiDiPasswordSite\Exception;
 
 use Shopware\Core\Framework\HttpException;
 
-class UserNotLoggedInException extends HttpException
+class UnauthorizedException extends HttpException
 {
     public function __construct(
         protected int $statusCode,

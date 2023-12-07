@@ -2,7 +2,7 @@
 
 namespace ImiDiPasswordSite\Subscriber;
 
-use ImiDiPasswordSite\Exception\UserNotLoggedInException;
+use ImiDiPasswordSite\Exception\UnauthorizedException;
 use ImiDiPasswordSite\Service\PasswordPathService;
 use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
@@ -69,7 +69,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
 
     public function onException(ExceptionEvent $event)
     {
-        if(!$event->getThrowable() instanceof UserNotLoggedInException) {
+        if(!$event->getThrowable() instanceof UnauthorizedException) {
             return;
         }
 

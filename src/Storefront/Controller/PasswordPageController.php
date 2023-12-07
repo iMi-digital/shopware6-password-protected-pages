@@ -27,9 +27,9 @@ class PasswordPageController extends StorefrontController
     }
 
     /**
-     * @Route("/restricted/{navigationId}", name="frontend.password.restricted", methods={"GET"})
+     * @Route("/password-site/login/{navigationId}", name="frontend.password.restricted", methods={"GET"})
      */
-    public function restricted(Request $request, SalesChannelContext $salesChannelContext): Response
+    public function showLogin(Request $request, SalesChannelContext $salesChannelContext): Response
     {
         $page = $this->genericPageLoader->load($request, $salesChannelContext);
 
@@ -40,7 +40,7 @@ class PasswordPageController extends StorefrontController
     }
 
     /**
-     * @Route("/login/{navigationId}", name="frontend.password.login", methods={"POST"})
+     * @Route("/password-site/login/{navigationId}", name="frontend.password.login", methods={"POST"})
      */
     public function login(Request $request): Response
     {
