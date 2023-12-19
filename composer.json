@@ -6,7 +6,7 @@
     "license": "AGPL-3.0-or-later",
     "autoload": {
         "psr-4": {
-            "ImiDiPasswordSite\\": "src/"
+            "ImiDiPasswordProtectedPages\\": "src/"
         }
     },
     "authors": [
@@ -20,7 +20,7 @@
         "shopware/core": "^6.5"
     },
     "extra": {
-        "shopware-plugin-class": "ImiDiPasswordSite\\ImiDiPasswordSite",
+        "shopware-plugin-class": "ImiDiPasswordProtectedPages\\ImiDiPasswordProtectedPages",
         "label": {
             "de-DE": "iMi Passwort Seite",
             "en-GB": "iMi Password Site"

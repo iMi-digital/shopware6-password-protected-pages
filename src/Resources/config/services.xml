@@ -8,6 +8,6 @@
         <defaults autowire="true" autoconfigure="true" public="false">
         </defaults>
 
-        <prototype namespace="ImiDiPasswordSite\" resource="../../*"/>
+        <prototype namespace="ImiDiPasswordProtectedPages\" resource="../../*"/>
     </services>
 </container>

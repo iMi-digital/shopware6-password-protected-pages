@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace ImiDiPasswordSite\Storefront\Controller;
+namespace ImiDiPasswordProtectedPages\Storefront\Controller;
 
-use ImiDiPasswordSite\Service\PasswordPathService;
+use ImiDiPasswordProtectedPages\Service\PasswordPathService;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -33,7 +33,7 @@ class PasswordPageController extends StorefrontController
     {
         $page = $this->genericPageLoader->load($request, $salesChannelContext);
 
-        return $this->renderStorefront('@ImiDiPasswordSite/storefront/page/restricted.html.twig', [
+        return $this->renderStorefront('@ImiDiPasswordProtectedPages/storefront/page/restricted.html.twig', [
             'navigationId' => $request->get('navigationId'),
             'page' => $page,
         ]);

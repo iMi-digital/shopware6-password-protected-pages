@@ -1,6 +1,6 @@
 <?php
 
-namespace ImiDiPasswordSite\Exception;
+namespace ImiDiPasswordProtectedPages\Exception;
 
 use Shopware\Core\Framework\HttpException;
 

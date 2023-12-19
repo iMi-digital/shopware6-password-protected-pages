@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-use ImiDiPasswordSite\Service\PasswordPathService;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace ImiDiPasswordSite;
+namespace ImiDiPasswordProtectedPages;
 
 use Enqueue\Util\UUID;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -12,7 +12,7 @@ use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\IdSearchResult;
 
-class ImiDiPasswordSite extends Plugin
+class ImiDiPasswordProtectedPages extends Plugin
 {
 
     private const CUSTOM_FIELD_NAME = 'password_site';
