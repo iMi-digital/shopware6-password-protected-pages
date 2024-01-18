@@ -22,8 +22,8 @@
     "extra": {
         "shopware-plugin-class": "ImiDiPasswordProtectedPages\\ImiDiPasswordProtectedPages",
         "label": {
-            "de-DE": "iMi Passwort Seite",
-            "en-GB": "iMi Password Site"
+            "de-DE": "iMi Passwortgeschützte Seiten",
+            "en-GB": "iMi Password Protected Pages"
         },
         "description": {
             "de-DE": "Erm\u00f6glicht das sichern von Frontendseiten (Kategorien) mit einem Passwort. Das Passwort kann unter 'Zusatzfelder' konfiguriert werden und wird auf Unterkateogrien vererbt.",
