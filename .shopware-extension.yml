@@ -6,7 +6,8 @@ store:
     localizations:
         - de_DE
         - en_GB
-    categories: []
+    categories:
+        - MenueKategorien
     type: extension
     icon: src/Resources/store/icon.png
     automatic_bugfix_version_compatibility: false
@@ -14,7 +15,7 @@ store:
         de: <p>Ermöglicht das Absichern von Frontendseiten (Kategorien) mit einem Passwort. Je Kategorieseite kann ein individuelles Kennwort festgelegt werden, welches vom Benutzer eingegeben wird.</p>
         en: <p>Allows to secure frontend pages (categories) with a password. An individual password can be set for each category page, which needs to be entered by the user to access the content.</p>
     installation_manual:
-        de: <p>1. Installieren das Plugin</p><p>2. Aktivieren es</p><p>3. Navigieren zu einer Kategorie im Admin Panel</p><p>4. Scrollen nach unten zum Passwortfeld</p><p>5. Wenn ein Kennwort definiert ist, muss der Benutzer das Kennwort eingeben, um auf die Kategorie (oder etwaige Unterkategorien) zuzugreifen</p>
+        de: <p>1. Installieren Sie das Plugin</p><p>2. Aktivieren Sie es</p><p>3. Navigieren Sie zu einer Kategorie im Admin Panel</p><p>4. Scrollen Sie nach unten zum Passwortfeld</p><p>5. Wenn ein Kennwort definiert ist, muss der Benutzer das Kennwort eingeben, um auf die Kategorie (oder etwaige Unterkategorien) zuzugreifen</p>
         en: <p>1. Install the Plugin</p><p>2. Activate it</p><p>3. Navigate to a category in the admin panel</p><p>4. Scroll down to the password field</p><p>5. If a password is defined, the user needs to enter the password to access the category (or any subcategories)</p>
     tags:
         de: []
@@ -23,15 +24,11 @@ store:
         de: []
         en: []
     highlights:
-        de:
-            - ""
-        en:
-            - ""
+        de: []
+        en: []
     features:
-        de:
-            - ""
-        en:
-            - ""
+        de: []
+        en: []
     faq:
         de: []
         en: []
@@ -77,28 +74,16 @@ store:
             en: false
           priority: 1
 build:
-    extraBundles: []
-    shopwareVersionConstraint: ""
     zip:
         composer:
             enabled: false
-            before_hooks: []
-            after_hooks: []
-            excluded_packages: []
         assets:
             enabled: false
-            before_hooks: []
-            after_hooks: []
             enable_es_build_for_admin: false
             enable_es_build_for_storefront: false
+            es_build_disable_sass: false
+            npm_strict: false
         pack:
-            excludes:
-                paths: []
-            before_hooks: []
+            excludes: {}
 changelog:
     enabled: false
-    pattern: ""
-    template: ""
-    variables: {}
-    ai_enabled: false
-    vcsurl: ""
