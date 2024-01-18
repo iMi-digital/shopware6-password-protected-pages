@@ -1,7 +1,7 @@
 {
     "name": "imi/shopware6-password-site",
     "version": "2.0.0",
-    "description": "iMi Password Protected Page",
+    "description": "iMi Password Protected Pages",
     "type": "shopware-platform-plugin",
     "license": "AGPL-3.0-or-later",
     "autoload": {
@@ -34,8 +34,8 @@
             "en-GB": "https://www.imi-digital.de/en/"
         },
         "supportLink": {
-            "de-DE": "https://https://github.com/iMi-digital/shopware6-password-site/issues/de/",
-            "en-GB": "https://github.com/iMi-digital/shopware6-password-site/issues"
+            "de-DE": "https://github.com/iMi-digital/shopware6-password-protected-pages/issues/de/",
+            "en-GB": "https://github.com/iMi-digital/shopware6-password-protected-pages/issues"
         }
     }
 }
