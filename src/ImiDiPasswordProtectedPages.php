@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace iMidiPasswordSite;
+namespace ImiDiPasswordProtectedPages;
 
 use Enqueue\Util\UUID;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -12,7 +12,7 @@ use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\IdSearchResult;
 
-class iMidiPasswordSite extends Plugin
+class ImiDiPasswordProtectedPages extends Plugin
 {
 
     private const CUSTOM_FIELD_NAME = 'password_site';
@@ -43,6 +43,7 @@ class iMidiPasswordSite extends Plugin
                         'en-GB' => 'Password Protected Page',
                         'de-DE' => 'Passwortgeschützte Seite'
                     ],
+                    'translated' => false
                 ],
                 'customFields' => [
                     [
@@ -64,7 +65,7 @@ class iMidiPasswordSite extends Plugin
             ]
         ];
 
-        $customFieldSetRepository = $this->container->get('custom_field_set.repository');
+        $customFieldSetRepository = $this->getCustomFieldRepository();
 
         if (!$this->customFieldsExist($customFieldSetRepository, $installContext->getContext())) {
             foreach ($customFields as $customFieldSet) {
@@ -92,6 +93,11 @@ class iMidiPasswordSite extends Plugin
         $ids = $customFieldSetRepository->searchIds($criteria, $context);
 
         return $ids->getTotal() > 0 ? $ids : null;
+    }
+
+    private function getCustomFieldRepository()
+    {
+        return $this->container->get('custom_field_set.repository');
     }
 
 }

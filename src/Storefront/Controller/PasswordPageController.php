@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace iMidiPasswordSite\Storefront\Controller;
+namespace ImiDiPasswordProtectedPages\Storefront\Controller;
 
-use iMidiPasswordSite\Subscriber\CheckPasswordSubscriber;
+use ImiDiPasswordProtectedPages\Service\PasswordPathService;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -18,67 +18,61 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PasswordPageController extends StorefrontController
 {
-    private EntityRepository $categoryRepositoryInterface;
-    private GenericPageLoader $genericPageLoader;
 
-    public function __construct(EntityRepository $categoryRepositoryInterface, GenericPageLoader $genericPageLoader)
+    public function __construct(
+        private EntityRepository $categoryRepository,
+        private GenericPageLoader $genericPageLoader,
+    )
     {
-        $this->categoryRepositoryInterface = $categoryRepositoryInterface;
-        $this->genericPageLoader = $genericPageLoader;
     }
 
     /**
-     * @Route("/restricted/{navigationId}", name="frontend.password.restricted", methods={"GET"})
+     * @Route("/password-site/login/{navigationId}", name="frontend.password.restricted", methods={"GET"})
      */
-    public function showLogin(Request $request, SalesChannelContext $context): Response
+    public function showLogin(Request $request, SalesChannelContext $salesChannelContext): Response
     {
-        $page = $this->genericPageLoader->load($request, $context);
+        $page = $this->genericPageLoader->load($request, $salesChannelContext);
 
-        return $this->renderStorefront('@iMidiPasswordSite/storefront/page/restricted.html.twig', [
+        return $this->renderStorefront('@ImiDiPasswordProtectedPages/storefront/page/restricted.html.twig', [
             'navigationId' => $request->get('navigationId'),
             'page' => $page,
         ]);
     }
 
     /**
-     * @Route("/login", name="frontend.password.login", methods={"POST"})
+     * @Route("/password-site/login/{navigationId}", name="frontend.password.login", methods={"POST"})
      */
-    public function login(Request $request, Context $context): Response
+    public function login(Request $request): Response
     {
-        $navigationId = $request->request->get('navigationId');
+        $navigationId = $request->get('navigationId');
 
         if(!$request->request->has('password')) {
-            $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
+            $this->addFlash(self::DANGER, $this->trans('ImiDi.password-incorrect'));
             return $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
         }
 
         $password = $request->request->get('password');
 
-        $sitepassword = $this->getCategoryPassword($navigationId, $context);
+        $sitepassword = $this->getCategoryPassword($navigationId);
 
         if ($password === $sitepassword) {
-            $request->getSession()->set(CheckPasswordSubscriber::AUTH_SESSION_PREFIX . $navigationId, true);
-            return $this->redirect($request->getSession()->get('redirect'));
+            $request->getSession()->set(PasswordPathService::AUTH_SESSION_PREFIX . $navigationId, true);
+            return $this->redirectToRoute('frontend.navigation.page', ['navigationId' => $navigationId]);
         }
 
-        $this->addFlash(self::DANGER, $this->trans('imidi.password-incorrect'));
+        $this->addFlash(self::DANGER, $this->trans('ImiDi.password-incorrect'));
+
         return $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
     }
 
-    public function redirectToLogin(string $navigationId)
-    {
-        $response = $this->redirectToRoute('frontend.password.restricted', ['navigationId' => $navigationId]);
-        $response->send();
-    }
-
-    public function getCategoryPassword(string $navigationId, Context $context): ?string
+    private function getCategoryPassword(string $navigationId): ?string
     {
         if (!$navigationId) {
             return null;
         }
 
-        $result = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), $context);
-        if ($result->count() <= 0) {
+        $result = $this->categoryRepository->search(new Criteria([$navigationId]), Context::createDefaultContext());
+        if ($result->count() <= 0 || !$result->first()) {
             return null;
         }
 

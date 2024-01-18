@@ -5,18 +5,9 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="iMidiPasswordSite\Storefront\Controller\PasswordPageController" public="true">
-            <argument type="service" id="category.repository"/>
-            <argument type="service" id="Shopware\Storefront\Page\GenericPageLoader"/>
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
-        </service>
-        <service id="iMidiPasswordSite\Subscriber\CheckPasswordSubscriber">
-            <tag name="kernel.event_subscriber"/>
-            <argument type="service" id="router"/>
-            <argument type="service" id="category.repository"/>
-            <argument type="service" id="iMidiPasswordSite\Storefront\Controller\PasswordPageController"/>
-        </service>
+        <defaults autowire="true" autoconfigure="true" public="false">
+        </defaults>
+
+        <prototype namespace="ImiDiPasswordProtectedPages\" resource="../../*"/>
     </services>
 </container>

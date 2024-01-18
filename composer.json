@@ -1,12 +1,12 @@
 {
     "name": "imi/shopware6-password-site",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "iMi Password Protected Page",
     "type": "shopware-platform-plugin",
     "license": "AGPL-3.0-or-later",
     "autoload": {
         "psr-4": {
-            "iMidiPasswordSite\\": "src/"
+            "ImiDiPasswordProtectedPages\\": "src/"
         }
     },
     "authors": [
@@ -16,11 +16,11 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
-        "shopware/core": "~v6.4.13"
+        "php": "^8.0",
+        "shopware/core": "^6.5"
     },
     "extra": {
-        "shopware-plugin-class": "iMidiPasswordSite\\iMidiPasswordSite",
+        "shopware-plugin-class": "ImiDiPasswordProtectedPages\\ImiDiPasswordProtectedPages",
         "label": {
             "de-DE": "iMi Passwort Seite",
             "en-GB": "iMi Password Site"

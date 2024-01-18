@@ -4,8 +4,7 @@
 {% block base_content %}
     <div class="imidi-login-form">
         {% block imidi_login_form %}
-        <form action="{{ path('frontend.password.login') }}" method="post">
-            {{ sw_csrf('frontend.password.login') }}
+        <form action="{{ path('frontend.password.login', {'navigationId': navigationId}) }}" method="post">
             <input type="hidden" name="navigationId" value="{{ navigationId }}">
             {% block imidi_login_form_inner %}
 

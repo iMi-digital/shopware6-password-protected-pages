@@ -1,45 +1,46 @@
 <?php declare(strict_types=1);
 
-namespace iMidiPasswordSite\Subscriber;
+namespace ImiDiPasswordProtectedPages\Subscriber;
 
-use iMidiPasswordSite\Storefront\Controller\PasswordPageController;
-use Shopware\Core\Content\Category\CategoryEntity;
-use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use ImiDiPasswordProtectedPages\Exception\UnauthorizedException;
+use ImiDiPasswordProtectedPages\Service\PasswordPathService;
+use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheHitEvent as CoreHttpCacheHitEvent;
 use Shopware\Storefront\Framework\Cache\Event\HttpCacheHitEvent;
+use Shopware\Storefront\Framework\Routing\Router;
 use Shopware\Storefront\Page\GenericPageLoadedEvent;
 use Shopware\Storefront\Page\PageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 class CheckPasswordSubscriber implements EventSubscriberInterface
 {
-    const AUTH_SESSION_PREFIX = 'auth_';
 
-    private $matcher;
-    private $categoryRepositoryInterface;
-    private $passwordPageController;
-
-    public function __construct($matcher,
-        EntityRepository $categoryRepositoryInterface,
-        PasswordPageController $passwordPageController)
+    public function __construct(
+        private Router $router,
+        private PasswordPathService $passwordPathService,
+    )
     {
-        $this->matcher = $matcher;
-        $this->categoryRepositoryInterface = $categoryRepositoryInterface;
-        $this->passwordPageController = $passwordPageController;
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
             GenericPageLoadedEvent::class => 'onPageLoaded',
+            /** @deprecated tag:v6.6.0 - Delete HttpCacheHitEvent and use CoreHttpCacheHitEvent instead */
             HttpCacheHitEvent::class => 'onCachedPageLoaded',
+            CoreHttpCacheHitEvent::class => 'onCachedPageLoaded',
+            KernelEvents::EXCEPTION => 'onException',
         ];
     }
 
     public function onPageLoaded(PageLoadedEvent $event)
     {
         $request = $event->getRequest();
+
+        //early return for login page being loaded
         if ($request->attributes->get('_route') === 'frontend.password.restricted') {
             return;
         }
@@ -50,62 +51,38 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         }
 
         $activeNavigation = $page->getHeader()->getNavigation()->getActive();
-        $this->checkPasswordInPath($activeNavigation, $event);
+        $this->passwordPathService->checkPasswordInPath($activeNavigation, $event);
     }
 
-    public function onCachedPageLoaded(HttpCacheHitEvent $event)
+    public function onCachedPageLoaded(HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
-        $requestUri = $event->getRequest()->attributes->get('resolved-uri');
-
-        if ($this->matcher instanceof RequestMatcherInterface) {
-            $parameters = $this->matcher->matchRequest($event->getRequest());
+        if ($this->router instanceof RequestMatcherInterface) {
+            $parameters = $this->router->matchRequest($event->getRequest());
         } else {
-            $parameters = $this->matcher->match($event->getRequest()->getPathInfo());
+            $parameters = $this->router->match($event->getRequest()->getPathInfo());
         }
 
         if ($parameters['_route'] === 'frontend.navigation.page') {
-            $navigationId = $parameters['navigationId'];
-            $category = $this->categoryRepositoryInterface->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();
-            $this->checkPasswordInPath($category, $event);
+            $this->passwordPathService->findNavigation($parameters['navigationId'], $event);
         }
     }
 
-    private function checkAuthenticated($event, string $navigationId)
+    public function onException(ExceptionEvent $event)
     {
-        $session = $event->getRequest()->getSession();
-        $session->set('redirect', $event->getRequest()->server->get('REQUEST_URI'));
-
-        if (!$session->has(self::AUTH_SESSION_PREFIX . $navigationId)) {
-            $this->passwordPageController->redirectToLogin($navigationId);
-        }
-    }
-
-    private function checkPasswordInPath(CategoryEntity $category, $event)
-    {
-        //include matcher
-        $context = Context::createDefaultContext();
-        if ($event instanceof PageLoadedEvent) {
-            $context = $event->getContext();
-        }
-
-        $path = $category->getPath();
-        if (!$path) {
-            if ($category->getCustomFields() !== null && array_key_exists('password_site_password', $category->getCustomFields())) {
-                $this->checkAuthenticated($event, $category->getId());
-            }
+        if(!$event->getThrowable() instanceof UnauthorizedException) {
             return;
         }
 
-        $path .= $category->getId();
-        $parents = array_reverse(array_slice(explode('|', $path), 1));
-        foreach ($parents as $parentId) {
-            $parent = $this->categoryRepositoryInterface
-                ->search(new Criteria([$parentId]), $context)->first();
-            if ($parent->getCustomFields() !== null && array_key_exists('password_site_password', $parent->getCustomFields())) {
-                $this->checkAuthenticated($event, $parent->getId());
-                break;
-            }
-        }
-    }
+        $request = $event->getRequest();
 
+        $parameters = [
+            'redirectTo' => $request->attributes->get('_route'),
+            'redirectParameters' => json_encode($request->attributes->get('_route_params'), \JSON_THROW_ON_ERROR),
+            'navigationId' => $request->attributes->get('_route_params')['navigationId'] ?? '',
+        ];
+
+        $redirectResponse = new RedirectResponse($this->router->generate('frontend.password.restricted', $parameters));
+
+        $event->setResponse($redirectResponse);
+    }
 }
