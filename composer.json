@@ -3,7 +3,7 @@
     "version": "2.0.0",
     "description": "iMi Password Protected Pages",
     "type": "shopware-platform-plugin",
-    "license": "AGPL-3.0-or-later",
+    "license": "proprietary",
     "autoload": {
         "psr-4": {
             "ImiDiPasswordProtectedPages\\": "src/"
