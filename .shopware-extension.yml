@@ -85,5 +85,3 @@ build:
             npm_strict: false
         pack:
             excludes: {}
-changelog:
-    enabled: false
