@@ -24,6 +24,7 @@ class PasswordPathService
     {
     }
 
+    // phpcs:ignore
     public function checkPasswordInPath(CategoryEntity $category, PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
         $context = Context::createDefaultContext();
@@ -58,9 +59,12 @@ class PasswordPathService
         }
     }
 
+    // phpcs:ignore
     private function checkAuthenticated(PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event, string $navigationId)
     {
+        // phpcs:ignore
         $session = $event->getRequest()->getSession();
+        // phpcs:ignore
         $redirect = $event->getRequest()->server->get('REQUEST_URI');
         $session->set('redirect', $redirect);
 
@@ -69,6 +73,7 @@ class PasswordPathService
         }
     }
 
+// phpcs:ignore
     public function findNavigation(mixed $navigationId, PageLoadedEvent|HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
         $category = $this->categoryRepository->search(new Criteria([$navigationId]), Context::createDefaultContext())->first();

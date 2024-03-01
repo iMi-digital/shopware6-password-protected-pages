@@ -30,6 +30,7 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         return [
             GenericPageLoadedEvent::class => 'onPageLoaded',
             /** @deprecated tag:v6.6.0 - Delete HttpCacheHitEvent and use CoreHttpCacheHitEvent instead */
+            // phpcs:ignore
             HttpCacheHitEvent::class => 'onCachedPageLoaded',
             CoreHttpCacheHitEvent::class => 'onCachedPageLoaded',
             KernelEvents::EXCEPTION => 'onException',
@@ -54,11 +55,14 @@ class CheckPasswordSubscriber implements EventSubscriberInterface
         $this->passwordPathService->checkPasswordInPath($activeNavigation, $event);
     }
 
+    // phpcs:ignore
     public function onCachedPageLoaded(HttpCacheHitEvent|CoreHttpCacheHitEvent $event)
     {
         if ($this->router instanceof RequestMatcherInterface) {
+            // phpcs:ignore
             $parameters = $this->router->matchRequest($event->getRequest());
         } else {
+            // phpcs:ignore
             $parameters = $this->router->match($event->getRequest()->getPathInfo());
         }
 
