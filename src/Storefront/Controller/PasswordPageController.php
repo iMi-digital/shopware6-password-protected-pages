@@ -34,7 +34,7 @@ class PasswordPageController extends StorefrontController
         $page = $this->genericPageLoader->load($request, $salesChannelContext);
 
         return $this->renderStorefront('@ImiDiPasswordProtectedPages/storefront/page/restricted.html.twig', [
-            'navigationId' => $request->get('navigationId'),
+            'navigationId' => $request->attributes->get('navigationId'),
             'page' => $page,
         ]);
     }
@@ -44,7 +44,7 @@ class PasswordPageController extends StorefrontController
      */
     public function login(Request $request): Response
     {
-        $navigationId = $request->get('navigationId');
+        $navigationId = $request->attributes->get('navigationId');
 
         if(!$request->request->has('password')) {
             $this->addFlash(self::DANGER, $this->trans('ImiDi.password-incorrect'));
