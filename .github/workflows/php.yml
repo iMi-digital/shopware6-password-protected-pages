@@ -22,6 +22,10 @@ jobs:
                 - '18.0'
                 - '20.0'
     steps:
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
     - name: Setup Shopware
       uses: FriendsOfShopware/setup-shopware@v1
       with:
@@ -32,10 +36,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
           path: custom/plugins/ImiDiPasswordProtectedPages
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
     - name: Install and activate plugin
       run: export APP_SECRET=1 && bin/console plugin:refresh && bin/console plugin:install -a ImiDiPasswordProtectedPages
     - name: Run Tests
