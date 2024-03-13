@@ -15,12 +15,13 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-            shopware-version:
-                - 'v6.5.7.3'
-                - 'v6.6.0.0-rc5'
-            node-version:
-                - '18'
-                - '20'
+          include:
+            - shopware-version: 'v6.5.8.7'
+              php-version: '8.1'
+              node-version: '18'
+            - shopware-version: 'v6.6.0.0-rc5'
+              php-version: '8.2'            
+              node-version: '20'
     steps:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
@@ -29,7 +30,7 @@ jobs:
     - name: Setup Shopware
       uses: FriendsOfShopware/setup-shopware@v1
       with:
-        php-version: 8.2
+        php-version: ${{ matrix.php-version }}
         shopware-version: ${{ matrix.shopware-version }}
     - name: Setup Shopware Database
       run: composer setup
