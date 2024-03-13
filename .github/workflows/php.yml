@@ -19,8 +19,8 @@ jobs:
                 - 'v6.5.7.3'
                 - 'v6.6.0.0-rc5'
             node-version:
-                - '18.0'
-                - '20.0'
+                - '18'
+                - '20'
     steps:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
